@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,100 +8,150 @@
     android:orientation="vertical"
     tools:context=".ChatLayout">
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/iv_voice_for_chat_layout"
-            android:layout_width="42dp"
-            android:layout_height="48dp"
-            android:layout_gravity="bottom"
-            android:clickable="true"
-            android:paddingLeft="8dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:src="@drawable/selector_btn_voice_for_chat_layout" />
-
-        <ImageView
-            android:id="@+id/iv_keyboard_for_chat_layout"
-            android:layout_width="42dp"
-            android:layout_height="48dp"
-            android:clickable="true"
-            android:paddingLeft="8dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:src="@drawable/selector_btn_keyboard_for_chat_layout"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
-        <EditText
-            android:id="@+id/et_msg_for_chat_layout"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/linearChat"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="6dp"
-            android:layout_weight="1"
-            android:background="@drawable/selector_bg_et_msg_for_chat_layout"
-            android:hint="发送消息"
-            android:maxLines="5"
-            android:minHeight="36dp"
-            android:paddingLeft="6dp" />
-
-        <TextView
-            android:id="@+id/tv_press_speak_for_chat_layout"
-            android:layout_width="0dp"
-            android:layout_height="36dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginRight="25dp"
-            android:layout_marginBottom="6dp"
-            android:layout_weight="1"
-            android:background="@drawable/shape_bg_press_speak_for_chat_layout"
-            android:gravity="center"
-            android:text="按住 说话"
-            android:textColor="#666666"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
-        <ImageView
-            android:id="@+id/iv_emoji_for_chat_layout"
-            android:layout_width="32dp"
-            android:layout_height="48dp"
-            android:layout_gravity="bottom"
-            android:layout_marginRight="8dp"
-            android:clickable="true"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:src="@drawable/selector_btn_emoji_for_chat_layout" />
-
-        <FrameLayout
-            android:id="@+id/fl_send_plus_for_chat_layout"
-            android:layout_width="42dp"
-            android:layout_height="48dp"
-            android:layout_gravity="bottom"
-            android:layout_marginRight="8dp">
-
-            <Button
-                android:id="@+id/btn_send_for_chat_layout"
-                android:layout_width="42dp"
-                android:layout_height="32dp"
-                android:layout_gravity="center"
-                android:background="@drawable/selector_btn_send_for_chat_layout"
-                android:text="发送"
-                android:textColor="@color/white_for_chat_layout"
-                android:textSize="16sp"
-                android:visibility="gone"
-                tools:visibility="visible" />
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/microView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/iv_sendplus_for_chat_layout"
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:layout_gravity="start|center_vertical"
-                android:src="@drawable/selector_btn_plus_for_chat_layout" />
-        </FrameLayout>
-    </LinearLayout>
+                android:id="@+id/iv_voice_for_chat_layout"
+                android:layout_width="42dp"
+                android:layout_height="48dp"
+                android:layout_gravity="bottom"
+                android:clickable="true"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:src="@drawable/selector_btn_voice_for_chat_layout" />
+
+            <!--            <ImageView-->
+            <!--                android:id="@+id/iv_keyboard_for_chat_layout"-->
+            <!--                android:layout_width="39dp"-->
+            <!--                android:layout_height="48dp"-->
+            <!--                android:clickable="true"-->
+            <!--                android:paddingLeft="8dp"-->
+            <!--                android:paddingTop="8dp"-->
+            <!--                android:paddingBottom="8dp"-->
+            <!--                android:src="@drawable/selector_btn_keyboard_for_chat_layout"-->
+            <!--                android:visibility="gone"-->
+            <!--                tools:visibility="visible" />-->
+
+            <EditText
+                android:id="@+id/et_msg_for_chat_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/selector_bg_et_msg_for_chat_layout"
+                android:hint="发送消息"
+                android:maxLines="5"
+                android:minHeight="36dp"
+                android:paddingLeft="6dp" />
+
+<!--            <TextView-->
+<!--                android:id="@+id/tv_press_speak_for_chat_layout"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="36dp"-->
+<!--                android:layout_marginLeft="25dp"-->
+<!--                android:layout_marginTop="6dp"-->
+<!--                android:layout_marginRight="25dp"-->
+<!--                android:layout_marginBottom="6dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:background="@drawable/shape_bg_press_speak_for_chat_layout"-->
+<!--                android:gravity="center"-->
+<!--                android:text="按住 说话"-->
+<!--                android:textColor="#666666"-->
+<!--                android:visibility="gone"-->
+<!--                tools:visibility="visible" />-->
+
+<!--            <ImageView-->
+<!--                android:id="@+id/iv_emoji_for_chat_layout"-->
+<!--                android:layout_width="32dp"-->
+<!--                android:layout_height="48dp"-->
+<!--                android:layout_gravity="bottom"-->
+<!--                android:layout_marginRight="8dp"-->
+<!--                android:clickable="true"-->
+<!--                android:paddingTop="8dp"-->
+<!--                android:paddingBottom="8dp"-->
+<!--                android:src="@drawable/selector_btn_emoji_for_chat_layout" />-->
+
+            <FrameLayout
+                android:id="@+id/fl_send_plus_for_chat_layout"
+                android:layout_width="42dp"
+                android:layout_height="48dp"
+                android:layout_gravity="bottom"
+                android:layout_marginRight="8dp">
+
+                <Button
+                    android:id="@+id/btn_send_for_chat_layout"
+                    android:layout_width="42dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/selector_btn_send_for_chat_layout"
+                    android:text="发送"
+                    android:textColor="@color/white_for_chat_layout"
+                    android:textSize="16sp" />
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/iv_sendplus_for_chat_layout"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="32dp"-->
+<!--                    android:layout_gravity="start|center_vertical"-->
+<!--                    android:src="@drawable/selector_btn_plus_for_chat_layout" />-->
+            </FrameLayout>
+        </LinearLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/microView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@color/blue_2EABFB_for_chat_layout"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/linearChat"
+            tools:layout_editor_absoluteY="131dp"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/iv_keyboard_for_chat_layout"
+                android:layout_width="39dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:clickable="true"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:src="@drawable/selector_btn_keyboard_for_chat_layout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_press_speak_for_chat_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/animation_list_recording_volume"
+                android:gravity="center"
+                android:text="点击讲话"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+
+    </android.support.constraint.ConstraintLayout>
 
     <FrameLayout
         android:id="@+id/fl_bottom_for_chat_layout"

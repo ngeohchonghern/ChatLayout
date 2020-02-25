@@ -29,6 +29,24 @@
             app:stackFromEnd="true"
             tools:listitem="@layout/item_chat_contact" />
 
+        <!--        <com.actor.chatlayout.VoiceRecorderView-->
+        <!--            android:id="@+id/voice_recorder"-->
+        <!--            android:layout_width="200dp"-->
+        <!--            android:layout_height="200dp"-->
+        <!--            android:layout_gravity="center" />-->
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.actor.chatlayout.ChatLayout
+            android:id="@+id/chat_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:clBtnSendBackground="@drawable/selector_btn_send_for_chat_layout"
+            app:clIvVoiceVisiable="true" />
+
         <com.actor.chatlayout.VoiceRecorderView
             android:id="@+id/voice_recorder"
             android:layout_width="200dp"
@@ -36,12 +54,4 @@
             android:layout_gravity="center" />
     </FrameLayout>
 
-    <com.actor.chatlayout.ChatLayout
-        android:id="@+id/chat_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:clBtnSendBackground="@drawable/selector_btn_send_for_chat_layout"
-        app:clIvEmojiVisiable="true"
-        app:clIvPlusVisiable="true"
-        app:clIvVoiceVisiable="true" />
 </LinearLayout>

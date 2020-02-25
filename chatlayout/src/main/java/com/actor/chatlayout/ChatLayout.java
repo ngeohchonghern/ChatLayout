@@ -45,40 +45,42 @@ import com.actor.chatlayout.utils.KeyboardUtils;
 
 /**
  * <ul>
- *     <li>Description: 聊天控件,封装几个按钮及事件,包含:
- *     <ol>
- *         <li>语音按钮</li>
- *         <li>EditText</li>
- *         <li>Emoji按钮</li>
- *         <li>发送按钮</li>
- *         <li>⊕按钮</li>
- *     </ol>
- *     </li>
- *     <li>★★★注意:应该重写onBackPressed方法,示例:★★★</li>
- *     <li>&emsp;@Override</li>
- *     <li>&emsp;public void onBackPressed() {</li>
- *     <li>&emsp;&emsp;if (chatLayout.isBottomViewGone()) {</li>
- *     <li>&emsp;&emsp;&emsp;super.onBackPressed();//自己页面的逻辑</li>
- *     <li>&emsp;&emsp;}</li>
- *     <li>&emsp;}</li>
- *     <li></li>
- *     <li>Author     : 李大发</li>
- *     <li>Date       : 2018/8/2 on 16:16</li>
+ * <li>Description: 聊天控件,封装几个按钮及事件,包含:
+ * <ol>
+ * <li>语音按钮</li>
+ * <li>EditText</li>
+ * <li>Emoji按钮</li>
+ * <li>发送按钮</li>
+ * <li>⊕按钮</li>
+ * </ol>
+ * </li>
+ * <li>★★★注意:应该重写onBackPressed方法,示例:★★★</li>
+ * <li>&emsp;@Override</li>
+ * <li>&emsp;public void onBackPressed() {</li>
+ * <li>&emsp;&emsp;if (chatLayout.isBottomViewGone()) {</li>
+ * <li>&emsp;&emsp;&emsp;super.onBackPressed();//自己页面的逻辑</li>
+ * <li>&emsp;&emsp;}</li>
+ * <li>&emsp;}</li>
+ * <li></li>
+ * <li>Author     : 李大发</li>
+ * <li>Date       : 2018/8/2 on 16:16</li>
  * </ul>
  */
 public class ChatLayout extends LinearLayout {
 
     private static final String TAG = ChatLayout.class.getName();
-    private RecyclerView        mRecyclerView;//上面列表RecyclerView
-    private ImageView           ivVoice;
-    private ImageView           ivKeyboard;
-    private EditText            etMsg;
-    private TextView            tvPressSpeak;//按住说话按钮
-    private ImageView           ivEmoji;//表情
-    private FrameLayout         flParent;
-    private Button              btnSend;
-    private ImageView           ivSendPlus;//右边⊕或ⓧ号
-    private View                bottomView;//底部View
+    private RecyclerView mRecyclerView;//上面列表RecyclerView
+    private ImageView ivVoice;
+    private ImageView ivKeyboard;
+    private EditText etMsg;
+    private TextView tvPressSpeak;//按住说话按钮
+    private ImageView ivEmoji;//表情
+    private FrameLayout flParent;
+    private Button btnSend;
+    private ImageView ivSendPlus;//右边⊕或ⓧ号
+    private View bottomView;//底部View
+    private View voiceView;
+    private LinearLayout linearChat;
 
     private InputMethodManager imm;//虚拟键盘(输入法)
     private boolean ivVoiceVisiable;
@@ -89,13 +91,13 @@ public class ChatLayout extends LinearLayout {
     private boolean isKeyboardActive = false; //输入法是否激活
     private KeyboardOnGlobalChangeListener keyboardOnGlobalChangeListener;//onDetachedFromWindow中注销
 
-    private VoiceRecorderView       voiceRecorderView;//按住说话
-    private boolean                 audioRecordIsCancel;//语音录制是否已取消
-    private float                   startRecordY;//按下时的y坐标
-    private AlertDialog             mPermissionDialog;
-    private FragmentManager         fragmentManager;//用来控制下方emoji & ⊕ 的显示和隐藏
+    private VoiceRecorderView voiceRecorderView;//按住说话
+    private boolean audioRecordIsCancel;//语音录制是否已取消
+    private float startRecordY;//按下时的y坐标
+    private AlertDialog mPermissionDialog;
+    private FragmentManager fragmentManager;//用来控制下方emoji & ⊕ 的显示和隐藏
     private ChatLayoutEmojiFragment emojiFragment;
-    private MoreFragment            moreFragment;
+    private MoreFragment moreFragment;
 
     public ChatLayout(Context context) {
         this(context, null);
@@ -113,22 +115,25 @@ public class ChatLayout extends LinearLayout {
         ivKeyboard = inflate.findViewById(R.id.iv_keyboard_for_chat_layout);
         etMsg = inflate.findViewById(R.id.et_msg_for_chat_layout);
         tvPressSpeak = inflate.findViewById(R.id.tv_press_speak_for_chat_layout);
-        ivEmoji = inflate.findViewById(R.id.iv_emoji_for_chat_layout);
-        flParent = inflate.findViewById(R.id.fl_send_plus_for_chat_layout);
+//        ivEmoji = inflate.findViewById(R.id.iv_emoji_for_chat_layout);
+//        flParent = inflate.findViewById(R.id.fl_send_plus_for_chat_layout);
         btnSend = inflate.findViewById(R.id.btn_send_for_chat_layout);
-        ivSendPlus = inflate.findViewById(R.id.iv_sendplus_for_chat_layout);
+//        ivSendPlus = inflate.findViewById(R.id.iv_sendplus_for_chat_layout);
         bottomView = inflate.findViewById(R.id.fl_bottom_for_chat_layout);
+        voiceView = inflate.findViewById(R.id.microView);
+        linearChat = inflate.findViewById(R.id.linearChat);
         if (attrs != null) {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ChatLayout);
             ivVoiceVisiable = typedArray.getBoolean(R.styleable.ChatLayout_clIvVoiceVisiable, true);
-            ivEmojiVisiable = typedArray.getBoolean(R.styleable.ChatLayout_clIvEmojiVisiable, true);
+//            ivEmojiVisiable = typedArray.getBoolean(R.styleable.ChatLayout_clIvEmojiVisiable, true);
             ivPlusVisiable = typedArray.getBoolean(R.styleable.ChatLayout_clIvPlusVisiable, true);
             Drawable background = typedArray.getDrawable(R.styleable.ChatLayout_clBtnSendBackground);
             typedArray.recycle();
             ivVoice.setVisibility(ivVoiceVisiable ? VISIBLE : GONE);//设置语音按钮是否显示
-            ivEmoji.setVisibility(ivEmojiVisiable ? VISIBLE : GONE);//表情按钮是否显示
-            ivSendPlus.setVisibility(ivPlusVisiable ? VISIBLE : GONE);//设置右边⊕号是否显示
-            btnSend.setVisibility(ivPlusVisiable ? GONE : VISIBLE);//发送按钮
+//            ivEmoji.setVisibility(ivEmojiVisiable ? VISIBLE : GONE);//表情按钮是否显示
+//            ivSendPlus.setVisibility(ivPlusVisiable ? VISIBLE : GONE);//设置右边⊕号是否显示
+//            btnSend.setVisibility(ivPlusVisiable ? GONE : VISIBLE);//发送按钮
+//            btnSend.setVisibility(ivPlusVisiable ? GONE : VISIBLE);//发送按钮
             if (background != null) btnSend.setBackground(background);//背景
         }
 
@@ -139,7 +144,8 @@ public class ChatLayout extends LinearLayout {
 
     /**
      * 初始化
-     * @param recyclerView 聊天列表, 用来设置触摸事件,响应隐藏键盘
+     *
+     * @param recyclerView      聊天列表, 用来设置触摸事件,响应隐藏键盘
      * @param voiceRecorderView 按住说话View
      */
     @SuppressLint("ClickableViewAccessibility")
@@ -160,7 +166,8 @@ public class ChatLayout extends LinearLayout {
                         case MotionEvent.ACTION_UP:
                             float endY = event.getY();
                             if (Math.abs(endY - startY) < 15) {//点击
-                                if (onListener != null) onListener.onRecyclerViewTouchListener(v, event);
+                                if (onListener != null)
+                                    onListener.onRecyclerViewTouchListener(v, event);
                                 etMsg.clearFocus();
                                 setKeyBoardVisiable(false);
                                 bottomView.setVisibility(GONE);
@@ -184,42 +191,44 @@ public class ChatLayout extends LinearLayout {
         UIKitAudioArmMachine.init(getContext(), null);//初始化录音, 默认最大录音时长2分钟
     }
 
-    /**
-     * 设置下方显示的emoji & more Fragment
-     * @param fragmentManager Fragment管理器, Activity中传入getSupportFragmentManager()
-     * @param moreFragment 更多的Fragment, 可以使用默认的{@link MoreFragment}
-     */
-    public void setBottomFragment(FragmentManager fragmentManager, MoreFragment moreFragment) {
-        this.fragmentManager = fragmentManager;
-        this.emojiFragment = new ChatLayoutEmojiFragment();
-        this.moreFragment = moreFragment;
-
-        this.emojiFragment.setOnEmojiClickListener(new ChatLayoutEmojiFragment.OnEmojiClickListener() {
-            @Override
-            public void onEmojiDelete() {
-                KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
-                etMsg.dispatchKeyEvent(event);
-            }
-
-            @Override
-            public void onEmojiClick(Emoji emoji) {
-                int start = etMsg.getSelectionStart();
-                int end = etMsg.getSelectionEnd();
-                Editable editable = etMsg.getText();
-                if (start != end) editable.delete(start, end);//已选中
-                editable.insert(start, emoji.filter);
-                FaceManager.handlerEmojiText(etMsg, editable);
-            }
-
-            @Override
-            public void onCustomFaceClick(int groupIndex, Emoji emoji) {
-                // TODO: 2019/6/3
-                Log.e(TAG, "onCustomFaceClick: 自定义表情, 还未实现");
-            }
-        });
-    }
+//    /**
+//     * 设置下方显示的emoji & more Fragment
+//     *
+//     * @param fragmentManager Fragment管理器, Activity中传入getSupportFragmentManager()
+//     * @param moreFragment    更多的Fragment, 可以使用默认的{@link MoreFragment}
+//     */
+//    public void setBottomFragment(FragmentManager fragmentManager, MoreFragment moreFragment) {
+//        this.fragmentManager = fragmentManager;
+//        this.emojiFragment = new ChatLayoutEmojiFragment();
+//        this.moreFragment = moreFragment;
+//
+//        this.emojiFragment.setOnEmojiClickListener(new ChatLayoutEmojiFragment.OnEmojiClickListener() {
+//            @Override
+//            public void onEmojiDelete() {
+//                KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
+//                etMsg.dispatchKeyEvent(event);
+//            }
+//
+//            @Override
+//            public void onEmojiClick(Emoji emoji) {
+//                int start = etMsg.getSelectionStart();
+//                int end = etMsg.getSelectionEnd();
+//                Editable editable = etMsg.getText();
+//                if (start != end) editable.delete(start, end);//已选中
+//                editable.insert(start, emoji.filter);
+//                FaceManager.handlerEmojiText(etMsg, editable);
+//            }
+//
+//            @Override
+//            public void onCustomFaceClick(int groupIndex, Emoji emoji) {
+//                // TODO: 2019/6/3
+//                Log.e(TAG, "onCustomFaceClick: 自定义表情, 还未实现");
+//            }
+//        });
+//    }
 
     private Rect rect = new Rect();
+
     private class KeyboardOnGlobalChangeListener implements ViewTreeObserver.OnGlobalLayoutListener {
 
         @Override
@@ -261,17 +270,25 @@ public class ChatLayout extends LinearLayout {
                 if (onListener != null) onListener.onIvVoiceClick(ivVoice);
                 //如果不设置这句,别的应用再切换过来的时候,键盘会跳出来
                 setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-                v.setVisibility(GONE);
+//                v.setVisibility(GONE);
                 ivKeyboard.setVisibility(VISIBLE);
-                tvPressSpeak.setVisibility(VISIBLE);
-                if (ivPlusVisiable) {//如果ivPlus能显示
-                    btnSend.setVisibility(GONE);
-                    ivSendPlus.setVisibility(VISIBLE);
-                } else {//否则全隐藏,不然右侧会有个空白
-                    flParent.setVisibility(GONE);
-                }
+//                tvPressSpeak.setVisibility(VISIBLE);
+                voiceView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        voiceView.setVisibility(VISIBLE);
+                    }
+                }, 250);//等输入法弹出后, 再滑动到最后
+
+//                if (ivPlusVisiable) {//如果ivPlus能显示
+//                    btnSend.setVisibility(GONE);
+//                    ivSendPlus.setVisibility(VISIBLE);
+//                } else {//否则全隐藏,不然右侧会有个空白
+//                    flParent.setVisibility(GONE);
+//                }
                 etMsg.clearFocus();
-                etMsg.setVisibility(GONE);
+//                etMsg.setVisibility(GONE);
+                linearChat.setVisibility(GONE);
                 bottomView.setVisibility(GONE);
                 setKeyBoardVisiable(false);
             }
@@ -282,13 +299,16 @@ public class ChatLayout extends LinearLayout {
             @Override
             public void onClick(View v) {
                 if (onListener != null) onListener.onIvKeyBoardClick(ivKeyboard);
-                v.setVisibility(GONE);
+//                v.setVisibility(GONE);
                 ivVoice.setVisibility(VISIBLE);
-                tvPressSpeak.setVisibility(GONE);
-                etMsg.setVisibility(VISIBLE);
-                flParent.setVisibility(VISIBLE);
+//                tvPressSpeak.setVisibility(GONE);
+                voiceView.setVisibility(GONE);
+//                etMsg.setVisibility(VISIBLE);
+                linearChat.setVisibility(VISIBLE);
+//                flParent.setVisibility(VISIBLE);
                 //如果ivPlus不显示 或者 EditText里有字,都要显示发送按钮
-                if (!ivPlusVisiable || etMsg.getText().toString().length() > 0) btnSend.setVisibility(VISIBLE);
+//                if (!ivPlusVisiable || etMsg.getText().toString().length() > 0)
+//                    btnSend.setVisibility(VISIBLE);
                 etMsg.requestFocus();
                 // 输入法弹出之后，重新调整
                 setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -413,11 +433,11 @@ public class ChatLayout extends LinearLayout {
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     if (TextUtils.isEmpty(s)) {
-                        ivSendPlus.setVisibility(View.VISIBLE);
-                        btnSend.setVisibility(View.GONE);
+//                        ivSendPlus.setVisibility(View.VISIBLE);
+//                        btnSend.setVisibility(View.GONE);
                     } else {
-                        ivSendPlus.setVisibility(View.GONE);
-                        btnSend.setVisibility(View.VISIBLE);
+//                        ivSendPlus.setVisibility(View.GONE);
+//                        btnSend.setVisibility(View.VISIBLE);
                     }
                 }
 
@@ -428,31 +448,32 @@ public class ChatLayout extends LinearLayout {
         }
 
         //Emoji表情
-        ivEmoji.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onListener != null) {
-                    onListener.onIvEmojiClick(ivEmoji);
-                    if (fragmentManager != null) {
-                        FragmentTransaction transaction = fragmentManager.beginTransaction();
-                        if (moreFragment != null) {
-//                            if (!moreFragment.isAdded()) transaction.add(bottomView.getId(), moreFragment);
-                            if (moreFragment.isAdded() && !moreFragment.isHidden()) {
-                                transaction.hide(moreFragment);
-                                moreFragment.setUserVisibleHint(false);
-                            }
-                        }
-                        if (emojiFragment != null) {
-                            if (!emojiFragment.isAdded()) transaction.add(bottomView.getId(), emojiFragment);
-                            transaction.show(emojiFragment);
-                            emojiFragment.setUserVisibleHint(true);
-                        }
-                        transaction.commit();
-                    }
-                }
-                onEmoji$PlusClicked();
-            }
-        });
+//        ivEmoji.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (onListener != null) {
+//                    onListener.onIvEmojiClick(ivEmoji);
+//                    if (fragmentManager != null) {
+//                        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//                        if (moreFragment != null) {
+////                            if (!moreFragment.isAdded()) transaction.add(bottomView.getId(), moreFragment);
+//                            if (moreFragment.isAdded() && !moreFragment.isHidden()) {
+//                                transaction.hide(moreFragment);
+//                                moreFragment.setUserVisibleHint(false);
+//                            }
+//                        }
+//                        if (emojiFragment != null) {
+//                            if (!emojiFragment.isAdded())
+//                                transaction.add(bottomView.getId(), emojiFragment);
+//                            transaction.show(emojiFragment);
+//                            emojiFragment.setUserVisibleHint(true);
+//                        }
+//                        transaction.commit();
+//                    }
+//                }
+//                onEmoji$PlusClicked();
+//            }
+//        });
 
         //发送按钮
         btnSend.setOnClickListener(new OnClickListener() {
@@ -463,32 +484,33 @@ public class ChatLayout extends LinearLayout {
         });
 
         //右边⊕号
-        ivSendPlus.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onListener != null) {
-                    onListener.onIvPlusClick(ivSendPlus);
-                    if (fragmentManager != null) {
-                        FragmentTransaction transaction = fragmentManager.beginTransaction();
-                        if (emojiFragment != null) {
-                            if (emojiFragment.isAdded() && !emojiFragment.isHidden()) {
-                                transaction.hide(emojiFragment);
-                                emojiFragment.setUserVisibleHint(false);//fragment.onHiddenChanged
-                            }
-                        }
-                        if (moreFragment != null) {
-                            if (!moreFragment.isAdded()) transaction.add(bottomView.getId(), moreFragment);
-                            transaction.show(moreFragment);
-                            moreFragment.setUserVisibleHint(true);
-                        }
-                        transaction.commit();
-                    }
-                }
-                onEmoji$PlusClicked();
-            }
-        });
+//        ivSendPlus.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (onListener != null) {
+//                    onListener.onIvPlusClick(ivSendPlus);
+//                    if (fragmentManager != null) {
+//                        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//                        if (emojiFragment != null) {
+//                            if (emojiFragment.isAdded() && !emojiFragment.isHidden()) {
+//                                transaction.hide(emojiFragment);
+//                                emojiFragment.setUserVisibleHint(false);//fragment.onHiddenChanged
+//                            }
+//                        }
+//                        if (moreFragment != null) {
+//                            if (!moreFragment.isAdded())
+//                                transaction.add(bottomView.getId(), moreFragment);
+//                            transaction.show(moreFragment);
+//                            moreFragment.setUserVisibleHint(true);
+//                        }
+//                        transaction.commit();
+//                    }
+//                }
+//                onEmoji$PlusClicked();
+//            }
+//        });
 
-        if(!isInEditMode()){//造成错误的代码段
+        if (!isInEditMode()) {//造成错误的代码段
         }
     }
 
@@ -500,6 +522,7 @@ public class ChatLayout extends LinearLayout {
         }
         return true;
     }
+
     //显示没有权限的对话框, 跳转设置界面
     public void showPermissionDialog() {
         if (mPermissionDialog == null) {
@@ -526,42 +549,42 @@ public class ChatLayout extends LinearLayout {
     }
 
     //当 表情 or Plus按钮点击的时候
-    private void onEmoji$PlusClicked() {
-        if (ivVoiceVisiable) ivVoice.setVisibility(VISIBLE);
-        ivKeyboard.setVisibility(GONE);
-        etMsg.setVisibility(VISIBLE);
-        tvPressSpeak.setVisibility(GONE);
-        flParent.setVisibility(VISIBLE);
-        //如果ivPlust不显示 or EditText里有内容
-        if (!ivPlusVisiable || etMsg.getText().toString().length() > 0) {
-            btnSend.setVisibility(VISIBLE);
-        }
-        if (isKeyboardActive) {//输入法打开状态下
-            // 设置为不会调整大小，以便输入法弹起时布局不会改变。若不设置此属性，输入法弹起时布局会闪一下
-            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-            bottomView.setVisibility(VISIBLE);
-            setKeyBoardVisiable(false);
-            recyclerViewScroll2Last(0);
-        } else {//输入法关闭状态下
-            if (bottomView.getVisibility() != VISIBLE) {//bottomView是隐藏状态
-                bottomView.setVisibility(VISIBLE);
-                recyclerViewScroll2Last(0);
-            } else {
-                // 设置为不会调整大小，以便输入弹起时布局不会改变。若不设置此属性，输入法弹起时布局会闪一下
-                setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
-                setKeyBoardVisiable(true);
-                bottomView.postDelayed(new Runnable() {
-                    @Override
-                    public void run() { //输入法弹出之后，重新调整
-                        bottomView.setVisibility(View.GONE);
-                        setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-                    }
-                }, 250); // 延迟一段时间，等待输入法完全弹出
-                etMsg.requestFocus();
-            }
-        }
-    }
+//    private void onEmoji$PlusClicked() {
+//        if (ivVoiceVisiable) ivVoice.setVisibility(VISIBLE);
+//        ivKeyboard.setVisibility(GONE);
+//        etMsg.setVisibility(VISIBLE);
+//        tvPressSpeak.setVisibility(GONE);
+//        flParent.setVisibility(VISIBLE);
+//        //如果ivPlust不显示 or EditText里有内容
+//        if (!ivPlusVisiable || etMsg.getText().toString().length() > 0) {
+//            btnSend.setVisibility(VISIBLE);
+//        }
+//        if (isKeyboardActive) {//输入法打开状态下
+//            // 设置为不会调整大小，以便输入法弹起时布局不会改变。若不设置此属性，输入法弹起时布局会闪一下
+//            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+//            bottomView.setVisibility(VISIBLE);
+//            setKeyBoardVisiable(false);
+//            recyclerViewScroll2Last(0);
+//        } else {//输入法关闭状态下
+//            if (bottomView.getVisibility() != VISIBLE) {//bottomView是隐藏状态
+//                bottomView.setVisibility(VISIBLE);
+//                recyclerViewScroll2Last(0);
+//            } else {
+//                // 设置为不会调整大小，以便输入弹起时布局不会改变。若不设置此属性，输入法弹起时布局会闪一下
+//                setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+//                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
+//                setKeyBoardVisiable(true);
+//                bottomView.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() { //输入法弹出之后，重新调整
+//                        bottomView.setVisibility(View.GONE);
+//                        setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+//                    }
+//                }, 250); // 延迟一段时间，等待输入法完全弹出
+//                etMsg.requestFocus();
+//            }
+//        }
+//    }
 
     /**
      * 设置点击事件&其它事件的监听
@@ -601,12 +624,13 @@ public class ChatLayout extends LinearLayout {
     /**
      * 获取右侧Emoji☺ImageView
      */
-    public ImageView getIvEmoji() {
-        return ivEmoji;
-    }
+//    public ImageView getIvEmoji() {
+//        return ivEmoji;
+//    }
 
     /**
      * 获取发送按钮Button
+     *
      * @return
      */
     public Button getBtnSend() {
@@ -616,12 +640,13 @@ public class ChatLayout extends LinearLayout {
     /**
      * 获取右侧⊕ImageView
      */
-    public ImageView getIvPlus() {
-        return ivSendPlus;
-    }
+//    public ImageView getIvPlus() {
+//        return ivSendPlus;
+//    }
 
     /**
      * 如果下方控件没有隐藏,就隐藏:if (clChatLayout.isBottomViewGone()) super.onBackPressed();
+     *
      * @return 是否已经处理完成
      */
     public boolean isBottomViewGone() {
@@ -647,6 +672,7 @@ public class ChatLayout extends LinearLayout {
      * 获取屏幕高度
      */
     private int mScreenHeight = 0;
+
     protected int getScreenHeight() {
         if (mScreenHeight > 0) return mScreenHeight;
         return getContext().getResources().getDisplayMetrics().heightPixels;
@@ -658,6 +684,7 @@ public class ChatLayout extends LinearLayout {
 
     /**
      * RecyclerView滚动到最后
+     *
      * @param delay 延时多少秒后滚动到最后
      */
     protected void recyclerViewScroll2Last(int delay) {
@@ -689,13 +716,13 @@ public class ChatLayout extends LinearLayout {
         UIKitAudioArmMachine.getInstance().stopPlayRecord();
         if (fragmentManager != null) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            if (emojiFragment != null && emojiFragment.isAdded()) transaction.remove(emojiFragment);
-            if (moreFragment != null && moreFragment.isAdded()) transaction.remove(moreFragment);
+//            if (emojiFragment != null && emojiFragment.isAdded()) transaction.remove(emojiFragment);
+//            if (moreFragment != null && moreFragment.isAdded()) transaction.remove(moreFragment);
             //https://www.jianshu.com/p/05f36f2fa618
             //java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState
             transaction.commitAllowingStateLoss();//commit()
-            emojiFragment = null;
-            moreFragment = null;
+//            emojiFragment = null;
+//            moreFragment = null;
             fragmentManager = null;
         }
         super.onDetachedFromWindow();

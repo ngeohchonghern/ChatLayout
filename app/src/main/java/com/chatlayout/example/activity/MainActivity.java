@@ -64,7 +64,7 @@ public class MainActivity extends BaseActivity {
                 toast(itemMore.itemText);
             }
         });
-        chatLayout.setBottomFragment(getSupportFragmentManager(), moreFragment);
+//        chatLayout.setBottomFragment(getSupportFragmentManager(), moreFragment);
 
         chatLayout.setOnListener(new OnListener() {
             @Override
